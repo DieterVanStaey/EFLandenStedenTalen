@@ -176,31 +176,48 @@ namespace UI
             Console.WriteLine();
             Console.WriteLine("Geef een gemeente in: ");
             string nieuweGemeente = Console.ReadLine();
-            
-            Console.WriteLine("Kies een land waar je de stad bij wil voegen");
-            Console.WriteLine("---------------------------------------------");
-            using var context = new EFLandenStedenTalenContext();
-            foreach (var landstad in context.Landen)
+            if(nieuweGemeente != "")
             {
-                Console.WriteLine($"{landstad.ISOLandCode}\t{landstad.Naam}");
-            }
-            Console.WriteLine("Geef de landcode in: ");
-            string land = Console.ReadLine().ToUpper();
-            var nieuweStad = new Stad
-            {
-                Naam = nieuweGemeente,
-                ISOLandCode = land
-            };
-            var landKeuze = context.Landen.Where(c => c.ISOLandCode == land).FirstOrDefault();
-            if (landKeuze != null)
-            {
-                context.Steden.Add(nieuweStad);
-                context.SaveChanges();
+                Console.WriteLine("Kies een land waar je de stad bij wil voegen");
+                Console.WriteLine("---------------------------------------------");
+                using var context = new EFLandenStedenTalenContext();
+                foreach (var landstad in context.Landen)
+                {
+                    Console.WriteLine($"{landstad.ISOLandCode}\t{landstad.Naam}");
+                }
+                Console.WriteLine("Geef de landcode in: ");
+                string land = Console.ReadLine().ToUpper();
+                var nieuweStad = new Stad
+                {
+                    Naam = nieuweGemeente,
+                    ISOLandCode = land
+                };
+                var landKeuze = context.Landen.Where(c => c.ISOLandCode == land).FirstOrDefault();
+                if (landKeuze != null) 
+                {
+                    var aantalGemeentenMetZelfdeNaam = from gemeente in context.Steden
+                                                       where gemeente.ISOLandCode == land && gemeente.Naam == nieuweGemeente
+                                                       select gemeente;
+                    if (aantalGemeentenMetZelfdeNaam.Count() == 0)
+                    {
+                        context.Steden.Add(nieuweStad);
+                        context.SaveChanges();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Stad bestaat al in dit land");
+                    }                    
+                }
+                else
+                {
+                    Console.WriteLine("Ongeldige landkeuze");
+                }
             }
             else
             {
-                Console.WriteLine("Ongeldige landkeuze");
+                Console.WriteLine("Geen naam ingegeven");
             }
+            
             
         }
         // 6. Stad uit land verwijderen
@@ -216,17 +233,26 @@ namespace UI
             Console.WriteLine("Geef de gekozen landcode in: ");
             string landCode = Console.ReadLine().ToUpper();
             var landKeuze = context.Landen.Where(c => c.ISOLandCode == landCode).FirstOrDefault();
+            var stadsIds = new List<object>();
             foreach (var stad in landKeuze.Steden)
             {
                 Console.WriteLine($"{stad.StadId}\t{stad.Naam}");
+                stadsIds.Add(stad.StadId);
             }
             Console.WriteLine("Geef de gekozen stadsID in: ");
             int stadNr = Convert.ToInt32(Console.ReadLine());
             var teVerwijderenStad = context.Steden.Find(stadNr);
             if (teVerwijderenStad != null)
             {
-                context.Steden.Remove(teVerwijderenStad);
-                context.SaveChanges();
+                if (stadsIds.Contains(teVerwijderenStad.StadId))
+                {
+                    context.Steden.Remove(teVerwijderenStad);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    Console.WriteLine("Foute stadsId");
+                }                
             }
             else
             {
