@@ -14,7 +14,7 @@ namespace Model.Entities
         public string NaamTaal { get; set; }
 
         // navigation properties
-        public virtual ICollection<Land> Talen { get; set; } = new List<Land>();
+        public virtual ICollection<Land> Landen { get; set; } = new List<Land>();
 
     }
 }

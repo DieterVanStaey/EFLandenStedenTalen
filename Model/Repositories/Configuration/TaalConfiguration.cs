@@ -19,6 +19,7 @@ namespace Model.Repositories.Configuration
             builder.Property(b => b.NaamTaal)
                 .IsRequired()
                 .HasMaxLength(50);
+            //builder.HasMany(p => p.Landen).WithMany(p => p.Talen);
         }
     }
 }
