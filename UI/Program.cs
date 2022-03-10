@@ -95,7 +95,6 @@ namespace UI
             SeedingLandTaal();
             Console.Clear();
             using var context = new EFLandenStedenTalenContext();
-            Console.WriteLine();
             Console.WriteLine("Gemeente zoeken met landcode");
             Console.WriteLine("============================");
             Console.WriteLine("Geef een landcode in: ");
@@ -103,14 +102,21 @@ namespace UI
             var gemeenten = from stad in context.Steden
                             where stad.ISOLandCode == landCode
                             select stad;
-            foreach (var stad in gemeenten)
+            if (gemeenten.Count()>0)
             {
-                Console.WriteLine($"{stad.Naam}");
+                foreach (var stad in gemeenten)
+                {
+                    Console.WriteLine($"{stad.Naam}");
+                }
+                var land = context.Landen.Where(c => c.ISOLandCode == "BE").FirstOrDefault();
+                foreach (var taal in land.Talen)
+                {
+                    Console.WriteLine($"{taal.NaamNL}");
+                }
             }
-            var land = context.Landen.Where(c => c.ISOLandCode == "BE").FirstOrDefault();
-            foreach (var taal in land.Talen)
+            else
             {
-                Console.WriteLine($"{taal.NaamNL}");
+                Console.WriteLine("Landcode niet gevonden");
             }
         }
         static void SeedingLandTaal()
@@ -150,11 +156,11 @@ namespace UI
             }
             Console.WriteLine("Geef de gekozen landcode in: ");
             string landCode = Console.ReadLine().ToUpper();
-            var landKeuze = context.Landen.Where(c => c.ISOLandCode == landCode).FirstOrDefault();
-            Console.WriteLine("Geef het nieuwe aantal inwoners in: ");
-            int nieuwAantalInwoners = Convert.ToInt32(Console.ReadLine());
+            var landKeuze = context.Landen.Where(c => c.ISOLandCode == landCode).FirstOrDefault();            
             if(landKeuze!= null)
             {
+                Console.WriteLine("Geef het nieuwe aantal inwoners in: ");
+                int nieuwAantalInwoners = Convert.ToInt32(Console.ReadLine());
                 landKeuze.AantalInwoners = nieuwAantalInwoners;
                 context.SaveChanges();
             }
@@ -175,11 +181,11 @@ namespace UI
             }
             Console.WriteLine("Geef de gekozen landcode in: ");
             string landCode = Console.ReadLine().ToUpper();
-            var landKeuze = context.Landen.Where(c => c.ISOLandCode == landCode).FirstOrDefault();
-            Console.WriteLine("Geef de nieuwe oppervlakte in: ");
-            float nieuwAantalInwoners = float.Parse(Console.ReadLine(), CultureInfo.InvariantCulture.NumberFormat);
+            var landKeuze = context.Landen.Where(c => c.ISOLandCode == landCode).FirstOrDefault();            
             if (landKeuze != null)
             {
+                Console.WriteLine("Geef de nieuwe oppervlakte in: ");
+                float nieuwAantalInwoners = float.Parse(Console.ReadLine(), CultureInfo.InvariantCulture.NumberFormat);
                 landKeuze.Oppervlakte = nieuwAantalInwoners;
                 context.SaveChanges();
             }
@@ -196,15 +202,32 @@ namespace UI
             Console.WriteLine();
             Console.WriteLine("Geef een gemeente in: ");
             string nieuweGemeente = Console.ReadLine();
+            
+            Console.WriteLine("Kies een land waar je de stad bij wil voegen");
+            Console.WriteLine("---------------------------------------------");
+            using var context = new EFLandenStedenTalenContext();
+            foreach (var landstad in context.Landen)
+            {
+                Console.WriteLine($"{landstad.ISOLandCode}\t{landstad.Naam}");
+            }
             Console.WriteLine("Geef de landcode in: ");
             string land = Console.ReadLine().ToUpper();
             var nieuweStad = new Stad
             {
-                Naam = nieuweGemeente, ISOLandCode = land
+                Naam = nieuweGemeente,
+                ISOLandCode = land
             };
-            using var context = new EFLandenStedenTalenContext();
-            context.Steden.Add(nieuweStad);
-            context.SaveChanges();
+            var landKeuze = context.Landen.Where(c => c.ISOLandCode == land).FirstOrDefault();
+            if (landKeuze != null)
+            {
+                context.Steden.Add(nieuweStad);
+                context.SaveChanges();
+            }
+            else
+            {
+                Console.WriteLine("Ongeldige landkeuze");
+            }
+            
         }
         // 6. Stad uit land verwijderen
         static void Item06()
