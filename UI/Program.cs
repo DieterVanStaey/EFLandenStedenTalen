@@ -92,8 +92,6 @@ namespace UI
         // 2. Gemeente en talen zoeken met landcode
         static void Item02()
         {
-            SeedingLandTaal();
-            Console.Clear();
             using var context = new EFLandenStedenTalenContext();
             Console.WriteLine("Gemeente zoeken met landcode");
             Console.WriteLine("============================");
@@ -119,31 +117,7 @@ namespace UI
                 Console.WriteLine("Landcode niet gevonden");
             }
         }
-        static void SeedingLandTaal()
-        {
-            using var context = new EFLandenStedenTalenContext();
-            var landBE = context.Landen.Where(c => c.ISOLandCode == "BE").FirstOrDefault();
-            var landDE = context.Landen.Where(c => c.ISOLandCode == "DE").FirstOrDefault();
-            var landLU = context.Landen.Where(c => c.ISOLandCode == "LU").FirstOrDefault();
-            var landFR = context.Landen.Where(c => c.ISOLandCode == "FR").FirstOrDefault();
-            var landNL = context.Landen.Where(c => c.ISOLandCode == "NL").FirstOrDefault();
-
-            var taalNl = context.Talen.Where(t => t.ISOTaalCode == "nl").FirstOrDefault();
-            var taalDe = context.Talen.Where(t => t.ISOTaalCode == "de").FirstOrDefault();
-            var taalFr = context.Talen.Where(t => t.ISOTaalCode == "fr").FirstOrDefault();
-
-            landBE.Talen.Add(taalNl);
-            landBE.Talen.Add(taalFr);
-            landBE.Talen.Add(taalDe);
-            landLU.Talen.Add(taalFr);
-            landLU.Talen.Add(taalDe);
-            landDE.Talen.Add(taalDe);
-            landFR.Talen.Add(taalFr);
-            landNL.Talen.Add(taalNl);
-
-            context.SaveChanges();
-                
-        }
+        
         // 3. Aantal inwoners land wijzigen
         static void Item03()
         {

@@ -19,7 +19,15 @@ namespace Model.Repositories.Configuration
             builder.Property(b => b.NaamTaal)
                 .IsRequired()
                 .HasMaxLength(50);
-            //builder.HasMany(p => p.Landen).WithMany(p => p.Talen);
+            builder
+                .HasMany(p => p.Landen)
+                .WithMany(p => p.Talen)
+                .UsingEntity(j => j.HasData(
+                    new { LandenISOLandCode = "BE", TalenISOTaalCode = "nl" },
+                    new { LandenISOLandCode = "BE", TalenISOTaalCode = "fr" },
+                    new { LandenISOLandCode = "BE", TalenISOTaalCode = "de" },
+                    new { LandenISOLandCode = "DE", TalenISOTaalCode = "de" },
+                    new { LandenISOLandCode = "FR", TalenISOTaalCode = "fr" }));
         }
     }
 }
