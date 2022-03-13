@@ -11,7 +11,7 @@ namespace Model.Migrations
                 columns: new[] { "ISOLandCode", "AantalInwoners", "NISLandCode", "Naam", "Oppervlakte" },
                 values: new object[,]
                 {
-                    { "AT", 8754413, "105", "Oostenrijk", 83871f },
+                    { "AT", 8754413, "105", "Ostenrijk", 83871f },
                     { "BE", 11500000, "150", "België", 30689f },
                     { "CH", 8236303, "127", "Zwitserland", 41285f },
                     { "DE", 80594017, "103", "Duitsland", 357022f },
